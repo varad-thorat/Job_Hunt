@@ -1,0 +1,7 @@
+# Never commit your real credentials — these stay local only.
+service_account.json
+.env
+
+# Python
+__pycache__/
+*.pyc

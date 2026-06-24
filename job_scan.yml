@@ -1,0 +1,43 @@
+name: Job Scanner
+
+on:
+  schedule:
+    # Runs every 3 hours, on the hour. GitHub Actions cron is UTC —
+    # this is 00:00, 03:00, 06:00, ... 21:00 UTC, which is
+    # 05:30, 08:30, 11:30, ... 02:30 IST (UTC+5:30).
+    - cron: "0 */3 * * *"
+  workflow_dispatch:
+    # Lets you trigger a run manually from the Actions tab, useful
+    # for testing without waiting for the schedule.
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Write Google service account credentials to file
+        run: printf '%s' '${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}' > /tmp/service_account.json
+
+      - name: Verify credentials file is valid JSON
+        run: python -c "import json; json.load(open('/tmp/service_account.json')); print('service_account.json is valid JSON')"
+
+      - name: Run job scanner
+        env:
+          ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
+          ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GOOGLE_SERVICE_ACCOUNT_FILE: /tmp/service_account.json
+        run: python job_scanner.py
