@@ -164,7 +164,7 @@ TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "YOUR_TELEGRAM_CHAT_ID")
 # ============================================================
 SERVICE_ACCOUNT_FILE = os.environ.get("GOOGLE_SERVICE_ACCOUNT_FILE", "service_account.json")
 SHEET_NAME  = "Job_Hunt_Tracker"          # the Google Sheet's name
-TAB_NAME    = "📋 Applications"            # the worksheet/tab name inside it
+TAB_NAME    = "Applications"            # the worksheet/tab name inside it
 
 
 # ============================================================
